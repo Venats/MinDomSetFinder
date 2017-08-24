@@ -1,9 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "GraphIO.h"
-void Output(int** adjacent,int numberOfVertices,int* degree,int verboseOutput,int graphCounter, int minSize, int* minDomSet)
+//#include "VertexLinkedList.h"
+void IntializeVertexNodes(Node** vertexList,int numberOfVertices)
 {
-  if(verboseOutput == 1)
+  for(int vertexNode = 0; vertexNode < numberOfVertices; vertexNode++)
+  {
+    vertexList[vertexNode] = NewNode(vertexNode);
+  }
+  return;
+}
+void Output(int** adjacent,int numberOfVertices,int* degree,int outputType,int graphCounter, int minSize, int* minDomSet)
+{
+  if(outputType == 1)
   {
     printf("%d ", numberOfVertices);
     for(int i = 0; i < numberOfVertices; i++)
@@ -28,38 +37,56 @@ void Output(int** adjacent,int numberOfVertices,int* degree,int verboseOutput,in
     printf("%5d %3d %3d\n", graphCounter, numberOfVertices, minSize);
   }
 }
+
 int ReadGraph(int* dominatingDegree, int* marker,
-              int** adjacent,int* numberOfVertices,
-              int* degree)
+              Node** verticesByNumChoice,int* numChoice,int* numberOfVertices,
+              int* degree,int maxSize)
 {
   if(scanf("%d", numberOfVertices) != 1)
   {
-    //printf("Finished Reading all graphs");
+    printf("Finished Reading all graphs");
     return 0;
   }
-  //TODO: Decide how what to do with constants
-  /*if(*numberOfVertices > NMAX)
+  Node* vertexList[*numberOfVertices];
+  IntializeVertexNodes(vertexList, *numberOfVertices);
+  if(*numberOfVertices > maxSize)
   {
     printf("Too many vertices in graph, need to increase NMAX and recompile.");
     return 0;
-  }*/
-  for(int i = 0; i < *numberOfVertices; i++)
+  }
+  for(int currentVertex = 0; currentVertex < *numberOfVertices; currentVertex++)
   {
-    marker[i] = -1;
-    if(scanf("%d",&degree[i]) != 1)
+    int currentDegree;
+    marker[currentVertex] = -1;
+    if(scanf("%d",&currentDegree) != 1)
     {
-      printf("Error reading in a degree for vertex %d", i);
+      printf("Error reading in a degree for vertex %d", currentVertex);
       return 0;
     }
-    dominatingDegree[i] = degree[i]+1 ;
-    for(int j = 0; j < degree[i]; j++)
+    dominatingDegree[currentVertex] = currentDegree+1;
+    numChoice[currentVertex] = currentDegree +1;
+    InsertExistingNodeAtHead(vertexList[currentVertex],&verticesByNumChoice[ numChoice[currentVertex] ]);
+
+    for(int j = 0; j < currentDegree; j++)
     {
-      if(scanf("%d", &adjacent[i][j]) != 1)
+      int neighbour;
+      if(scanf("%d", &neighbour) != 1)
       {
-        printf("Error Reading in adacency. i = %d j = %d",i,j);
+        printf("Error Reading in adacency. i = %d j = %d",currentVertex,j);
         return 0;
       }
+      vertexList[currentVertex]->nhood[j] = vertexList[neighbour];
     }
   }
   return 1;
+}
+int main(int argc, char const *argv[])
+ {
+  Node* vertexList[10];
+  IntializeVertexNodes(vertexList, 10);
+  for(int i = 0; i < 10; i++)
+  {
+    printf("%d\n",vertexList[i]->vertex);
+  }
+  return 0;
 }

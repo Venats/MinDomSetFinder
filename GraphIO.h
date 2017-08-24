@@ -1,6 +1,8 @@
+#include "VertexLinkedList.h"
+
 void Output(int** adjacent,int numberOfVertices,
-            int* degree,int verboseOutput,
+            int* degree, int verboseOutput,
             int graphCounter, int minSize, int* minDomSet);
 int ReadGraph(int* dominatingDegree, int* marker,
-              int** adjacent,int* numberOfVertices,
-              int* degree);
+              Node** verticesByNumChoice,int* numChoice,int* numberOfVertices,
+              int* degree,int maxSize);

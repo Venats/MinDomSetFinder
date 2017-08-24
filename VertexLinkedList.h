@@ -1,3 +1,6 @@
+#ifndef VIEWLINKEDLIST
+#define VIEWLINKEDLIST
+
 typedef struct Node
 {
   int vertex;
@@ -5,6 +8,7 @@ typedef struct Node
   struct Node* next;
   struct Node* prev;
 }Node;
+Node* NewNode(int vertex);
 void PrintList(Node** head);
 void DeleteNodeNoFree(Node* toDelete,Node** headPointer);
 void InsertNewNodeAtHead(int vertex, Node** head);
@@ -14,3 +18,5 @@ Node* FindVertexNode(int vertex, Node* head);
 Node* GetNeighbourNode(Node* currentVertex, int neighbour, int degree);
 void InitalizeVertexNeighbourhoods(Node** numChoiceVertexList,int size, int* numChoice,int* degree,int** adjacent);
 void FreeVertexListPointers(Node** numChoiceVertexList,int size);
+
+#endif
