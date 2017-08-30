@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "GraphIO.h"
-//#include "VertexLinkedList.h"
 void IntializeVertexNodes(Node** vertexList,int numberOfVertices)
 {
   for(int vertexNode = 0; vertexNode < numberOfVertices; vertexNode++)
@@ -10,17 +9,25 @@ void IntializeVertexNodes(Node** vertexList,int numberOfVertices)
   }
   return;
 }
-void Output(int** adjacent,int numberOfVertices,int* degree,int outputType,int graphCounter, int minSize, int* minDomSet)
+
+void Output(Node** verticesByNumChoice,int numberOfVertices,int* degree,
+            int outputType,int graphCounter, int minSize, int* minDomSet,int maxDegree)
 {
   if(outputType == 1)
   {
     printf("%d ", numberOfVertices);
-    for(int i = 0; i < numberOfVertices; i++)
+    Node* vertexNode;
+    for(int i =0; i < maxDegree +2; i++)
     {
-        printf("\n%4d ",degree[i]);
-      for(int j = 0; j < degree[i]; j++)
+      vertexNode = verticesByNumChoice[i];
+      while(vertexNode != NULL)
       {
-          printf("%4d ",adjacent[i][j] );
+        printf("\n%4d ",degree[vertexNode->vertex]);
+        for(int j = 0; j < degree[vertexNode->vertex]; j++)
+        {
+            printf("%4d ",vertexNode->nhood[j]->vertex );
+        }
+        vertexNode = vertexNode->next;
       }
     }
     printf("\n");
@@ -80,7 +87,7 @@ int ReadGraph(int* dominatingDegree, int* marker,
   }
   return 1;
 }
-int main(int argc, char const *argv[])
+/*int main(int argc, char const *argv[])
  {
   Node* vertexList[10];
   IntializeVertexNodes(vertexList, 10);
@@ -89,4 +96,4 @@ int main(int argc, char const *argv[])
     printf("%d\n",vertexList[i]->vertex);
   }
   return 0;
-}
+}*/
