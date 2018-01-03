@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "VertexLinkedList.h"
+
 Node* NewNode(int vertex)
 {
   Node* newNode = (struct Node*)malloc(sizeof(struct Node));

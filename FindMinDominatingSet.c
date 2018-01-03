@@ -17,6 +17,7 @@ Node* verticesByNumChoice[DEG_MAX + 2];
 int numberOfVertices;
 int degree[DEG_MAX];
 int numChoice[DEG_MAX + 2];
+
 int GetOutputType(int argc, char const *argv[])
 {
   int outputType = -1;
