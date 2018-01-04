@@ -5,6 +5,7 @@
 #include "GraphIO.h"
 #include "VertexLinkedList.h"
 #include "Util.h"
+#include "Graph.h"
 
 #define NMAX 2187
 #define DEG_MAX 16

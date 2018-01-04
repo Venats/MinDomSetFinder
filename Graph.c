@@ -1,17 +1,27 @@
+#include <stdlib.h>
+#include "Graph.h"
 #include "VertexLinkedList.h"
-
-#define NMAX 2187
-#define DEG_MAX 16
-
-#define BLUE (-1)
-#define WHITE 0
-#define RED 1
-
-typedef struct Graph
+Vertex* NewVertex(int id, int degree)
 {
-    Node* verticesByNumChoice[DEG_MAX + 2];
-    int numberOfVertices;
-    int degree[DEG_MAX];
-    int numChoice[DEG_MAX + 2];
+    Vertex* newVertex = (struct Vertex*)malloc(sizeof(struct Vertex));
+    newVertex->id = id;
+    newVertex->degree = degree;
+    newVertex->state = undecided;
 
-}Graph;
+    newVertex->numDominated = 0;
+    newVertex->numChoice = degree+1;
+    newVertex->dominatingDegree = degree+1;
+    newVertex->dominatorDegree = 0;
+
+    return newVertex;
+}
+
+Graph* NewGraph(int numberOfVertices)
+{
+    Graph* newGraph = (Graph*)malloc(sizeof(struct Graph));
+    newGraph->numberOfVertices = numberOfVertices;
+    for(int i = 0; i<DEG_MAX +2; i++)
+    {
+        newGraph->numChoiceVertexLinkedList[i] = NULL;
+    }
+}
