@@ -23,14 +23,14 @@ int GetOutputType(int argc, char const *argv[])
   int outputType = -1;
   if(argc != 2 )
   {
-    printf("error program needs 1 argument, 0 for non verbose output, 1 for verbose output");
+    printf("error program needs 1 argument, 0 for non verbose output, 1 for verbose output\n");
     return outputType;
   }
   if(strcmp(argv[1],"0") == 0) outputType = 0;
   else if(strcmp(argv[1],"1") == 0) outputType = 1;
   else
   {
-      printf("Bad argument.");
+      printf("Bad argument.\n");
       return outputType;
   }
   return outputType;

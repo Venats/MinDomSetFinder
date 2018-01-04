@@ -6,6 +6,7 @@ Node* NewNode(int vertex)
 {
   Node* newNode = (struct Node*)malloc(sizeof(struct Node));
   newNode->vertex = vertex;
+  newNode->color = white;
   newNode->next = NULL;
   newNode->prev = NULL;
   return newNode;
@@ -69,6 +70,10 @@ void InsertExistingNodeAtHead(Node* node, Node** head)
   node->prev = NULL;
   *head = node;
   return;
+}
+void ChangeColor(Node* node, Color color)
+{
+  node->color = color;
 }
 //moves a vertex for the list with head1 to the list with head2
 void ChangeLists(Node* toChange, Node** head1,Node** head2)
