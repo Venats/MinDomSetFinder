@@ -52,12 +52,12 @@ Graph* ReadGraph()
   
   if(scanf("%d", &numberOfVertices) != 1)
   {
-    printf("Finished Reading all graphs");
+    printf("Finished Reading all graphs\n");
     return NULL;
   }
   if(numberOfVertices > NMAX)
   {
-    printf("Too many vertices in graph, need to increase NMAX and recompile.");
+    printf("Too many vertices in graph, need to increase NMAX and recompile.\n");
     return NULL;
   }
   Graph* graphRead = NewGraph(numberOfVertices);
@@ -68,7 +68,7 @@ Graph* ReadGraph()
     int vertexDegree;
     if(scanf("%d",&vertexDegree) != 1)
     {
-      printf("Error reading in a degree for vertex %d", vertexId);
+      printf("Error reading in a degree for vertex %d\n", vertexId);
       return NULL;
     }
 
@@ -80,7 +80,7 @@ Graph* ReadGraph()
       int neighbour;
       if(scanf("%d", &neighbour) != 1)
       {
-        printf("Error Reading in adacency. i = %d j = %d",vertexId,j);
+        printf("Error Reading in adacency. i = %d j = %d\n",vertexId,j);
         return NULL;
       }
       insertedNode->neighbourIDs[j] = neighbour; 
