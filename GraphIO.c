@@ -62,7 +62,6 @@ Graph* ReadGraph()
   }
   Graph* graphRead = NewGraph(numberOfVertices);
 
-
   for(int vertexId = 0; vertexId < numberOfVertices; vertexId++)
   {
     int vertexDegree;
@@ -71,7 +70,7 @@ Graph* ReadGraph()
       printf("Error reading in a degree for vertex %d\n", vertexId);
       return NULL;
     }
-
+    
     Vertex* vertexToAdd = NewVertex(vertexId,vertexDegree);
     Node** vertexLists = graphRead->numChoiceVertexLinkedList;
     Node* insertedNode = InsertNewNodeAtHead(vertexToAdd, &(vertexLists[vertexToAdd->numChoice]));
@@ -83,7 +82,7 @@ Graph* ReadGraph()
         printf("Error Reading in adacency. i = %d j = %d\n",vertexId,j);
         return NULL;
       }
-      insertedNode->neighbourIDs[j] = neighbour; 
+      insertedNode->neighbourIDs[j] = neighbour;
     }
   }
   InitalizeVertexNeighbourhoods(graphRead);

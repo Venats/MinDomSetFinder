@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "Graph.h"
 #include "VertexLinkedList.h"
 Graph* NewGraph(int numberOfVertices)
@@ -20,16 +21,15 @@ Node* FindVertexNode(int toFind, Graph* graph)
         {
             if(currentVertexNode->vertex->id == toFind)
             {
-                break;
+                return currentVertexNode;
             }
             currentVertexNode = currentVertexNode->next;
         }
     }
-  return currentVertexNode;
+    return NULL;
 }
 void InitalizeVertexNeighbourhoods(Graph* graph)
 {
-    
     for(int currentListIndex = 0;currentListIndex < DEG_MAX+2; currentListIndex++)
     {
         Node* currentVertexNode = graph->numChoiceVertexLinkedList[currentListIndex];
@@ -39,6 +39,11 @@ void InitalizeVertexNeighbourhoods(Graph* graph)
             {
                 int neighbourID = currentVertexNode->neighbourIDs[neighbour];
                 Node* neighbourNode = FindVertexNode(neighbourID,graph);
+                if(neighbourNode == NULL)
+                {
+                    printf("problem finding vertex %d\n", neighbourID);
+                    exit(0);
+                }
                 currentVertexNode->nhood[neighbour] = neighbourNode;
             }
             currentVertexNode = currentVertexNode->next;

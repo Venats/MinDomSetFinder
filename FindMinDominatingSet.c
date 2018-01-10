@@ -34,7 +34,22 @@ int main(int argc, char const *argv[])
   Graph* graph =  ReadGraph();
   while(graph != NULL)
   {
-
+    for(int currentListIndex = 0;currentListIndex < DEG_MAX+2; currentListIndex++)
+    {
+        Node* currentVertexNode = graph->numChoiceVertexLinkedList[currentListIndex];
+        while(currentVertexNode != NULL)
+        {
+            printf("read a non-null vertexNode \n");
+            printf("vertex pointer is %p\n",currentVertexNode->vertex);
+            printf("node %d has neighbours:\n", currentVertexNode->vertex->id);
+            for(int neighbour = 0; neighbour < currentVertexNode->vertex->degree ; neighbour++)
+            {
+                printf(" %d",currentVertexNode->nhood[neighbour]->vertex->id);
+            }
+            printf("\n");
+            currentVertexNode = currentVertexNode->next;
+        }
+    }
     FreeGraph(graph);
     graph = ReadGraph();
   }
