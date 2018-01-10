@@ -45,3 +45,20 @@ void InitalizeVertexNeighbourhoods(Graph* graph)
         }
     }
 }
+void FreeGraph(Graph* graph)
+{
+  for(int i = 0; i< DEG_MAX + 2; i++)
+  {
+    Node* currentNode = graph->numChoiceVertexLinkedList[i];
+    while(currentNode != NULL)
+    {
+      Node* nextNode = currentNode->next;
+      free(currentNode->vertex);
+      free(currentNode->nhood);
+      free(currentNode->neighbourIDs);
+      free(currentNode);
+      currentNode = nextNode;
+    }
+    graph->numChoiceVertexLinkedList[i] = NULL;
+  }
+}

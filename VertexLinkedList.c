@@ -110,18 +110,3 @@ Node* GetNeighbourNode(Node* currentVertex, int neighbour)
   return neighbourNode;
 }
 
-
-void FreeVertexListPointers(Node** numChoiceVertexList,int size)
-{
-  for(int i = 0; i< size; i++)
-  {
-    Node* currentNode = numChoiceVertexList[i];
-    while(currentNode != NULL)
-    {
-      Node* nextNode = currentNode->next;
-      free(currentNode);
-      currentNode = nextNode;
-    }
-    numChoiceVertexList[i] = NULL;
-  }
-}
