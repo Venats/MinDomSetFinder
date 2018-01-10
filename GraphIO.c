@@ -1,16 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "GraphIO.h"
-void IntializeVertexNodes(Node** vertexList,int numberOfVertices)
+#include "Graph.h"
+/*void IntializeVertexNodes(Node** vertexList,int numberOfVertices)
 {
   for(int vertexNode = 0; vertexNode < numberOfVertices; vertexNode++)
   {
     vertexList[vertexNode] = NewNode(vertexNode);
   }
   return;
-}
+}*/
 
-void Output(Node** verticesByNumChoice,int numberOfVertices,int* degree,
+/*void Output(Node** verticesByNumChoice,int numberOfVertices,int* degree,
             int outputType,int graphCounter, int minSize, int* minDomSet,int maxDegree)
 {
   if(outputType == 1)
@@ -43,49 +44,50 @@ void Output(Node** verticesByNumChoice,int numberOfVertices,int* degree,
   {
     printf("%5d %3d %3d\n", graphCounter, numberOfVertices, minSize);
   }
-}
+}*/
 
-int ReadGraph(int* dominatingDegree, int* marker,
-              Node** verticesByNumChoice,int* numChoice,int* numberOfVertices,
-              int* degree,int maxSize)
+Graph* ReadGraph()
 {
-  if(scanf("%d", numberOfVertices) != 1)
+  int numberOfVertices;
+  
+  if(scanf("%d", &numberOfVertices) != 1)
   {
     printf("Finished Reading all graphs");
-    return 0;
+    return NULL;
   }
-  Node* vertexList[*numberOfVertices];
-  IntializeVertexNodes(vertexList, *numberOfVertices);
-  if(*numberOfVertices > maxSize)
+  if(numberOfVertices > NMAX)
   {
     printf("Too many vertices in graph, need to increase NMAX and recompile.");
-    return 0;
+    return NULL;
   }
-  for(int currentVertex = 0; currentVertex < *numberOfVertices; currentVertex++)
-  {
-    int currentDegree;
-    marker[currentVertex] = -1;
-    if(scanf("%d",&currentDegree) != 1)
-    {
-      printf("Error reading in a degree for vertex %d", currentVertex);
-      return 0;
-    }
-    dominatingDegree[currentVertex] = currentDegree+1;
-    numChoice[currentVertex] = currentDegree +1;
-    InsertExistingNodeAtHead(vertexList[currentVertex],&verticesByNumChoice[ numChoice[currentVertex] ]);
+  Graph* graphRead = NewGraph(numberOfVertices);
 
-    for(int j = 0; j < currentDegree; j++)
+
+  for(int vertexId = 0; vertexId < numberOfVertices; vertexId++)
+  {
+    int vertexDegree;
+    if(scanf("%d",&vertexDegree) != 1)
+    {
+      printf("Error reading in a degree for vertex %d", vertexId);
+      return NULL;
+    }
+
+    Vertex* vertexToAdd = NewVertex(vertexId,vertexDegree);
+    Node** vertexLists = graphRead->numChoiceVertexLinkedList;
+    Node* insertedNode = InsertNewNodeAtHead(vertexToAdd, &(vertexLists[vertexToAdd->numChoice]));
+    for(int j = 0; j < vertexDegree; j++)
     {
       int neighbour;
       if(scanf("%d", &neighbour) != 1)
       {
-        printf("Error Reading in adacency. i = %d j = %d",currentVertex,j);
-        return 0;
+        printf("Error Reading in adacency. i = %d j = %d",vertexId,j);
+        return NULL;
       }
-      vertexList[currentVertex]->nhood[j] = vertexList[neighbour];
+      insertedNode->neighbourIDs[j] = neighbour; 
     }
   }
-  return 1;
+  InitalizeVertexNeighbourhoods(graphRead);
+  return graphRead;
 }
 /*int main(int argc, char const *argv[])
  {

@@ -42,11 +42,12 @@ int main(int argc, char const *argv[])
   int graphCounter = 0;
 
   outputType = GetOutputType(argc, argv);
-  if(outputType = -1) return 0;
+  if(outputType == -1) return 0;
+  Graph* graph =  ReadGraph();
+  while(graph != NULL)
+  {
 
-  //while(ReadGraph())
-  //{
-
-  //}
+    graph =  ReadGraph();
+  }
   return 0;
 }

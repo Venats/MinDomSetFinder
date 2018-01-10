@@ -1,27 +1,13 @@
 
-#ifndef VIEWLINKEDLIST2
-#include "VertexLinkedList.h"
-#define VIEWLINKEDLIST2
+#ifndef GRAPH
+#define GRAPH
 
+#include "VertexLinkedList.h"
 
 #define NMAX 2187
 #define DEG_MAX 16
 
-typedef enum DomState {inDomSet, undecided, outDomSet} DomState;
 
-typedef struct Vertex
-{
-    DomState state;
-    int id;
-    int degree;
-
-    int numDominated;
-    int numChoice;
-    int dominatingDegree;
-    int dominatorDegree;
-
-}Vertex;
-Vertex* NewVertex(int id, int degree);
 typedef struct Graph
 {
     int numberOfVertices;
@@ -29,4 +15,6 @@ typedef struct Graph
 
 }Graph;
 Graph* NewGraph(int numberOfVertices);
+Node* FindVertexNode(int toFind, Graph* graph);
+void InitalizeVertexNeighbourhoods(Graph* graph);
 #endif

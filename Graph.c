@@ -1,21 +1,6 @@
 #include <stdlib.h>
 #include "Graph.h"
 #include "VertexLinkedList.h"
-Vertex* NewVertex(int id, int degree)
-{
-    Vertex* newVertex = (struct Vertex*)malloc(sizeof(struct Vertex));
-    newVertex->id = id;
-    newVertex->degree = degree;
-    newVertex->state = undecided;
-
-    newVertex->numDominated = 0;
-    newVertex->numChoice = degree+1;
-    newVertex->dominatingDegree = degree+1;
-    newVertex->dominatorDegree = 0;
-
-    return newVertex;
-}
-
 Graph* NewGraph(int numberOfVertices)
 {
     Graph* newGraph = (Graph*)malloc(sizeof(struct Graph));
@@ -23,5 +8,40 @@ Graph* NewGraph(int numberOfVertices)
     for(int i = 0; i<DEG_MAX +2; i++)
     {
         newGraph->numChoiceVertexLinkedList[i] = NULL;
+    }
+}
+Node* FindVertexNode(int toFind, Graph* graph)
+{
+    Node* currentVertexNode;
+    for(int currentListIndex = 0;currentListIndex < DEG_MAX+2; currentListIndex++)
+    {
+        currentVertexNode = graph->numChoiceVertexLinkedList[currentListIndex];
+        while(currentVertexNode != NULL)
+        {
+            if(currentVertexNode->vertex->id == toFind)
+            {
+                break;
+            }
+            currentVertexNode = currentVertexNode->next;
+        }
+    }
+  return currentVertexNode;
+}
+void InitalizeVertexNeighbourhoods(Graph* graph)
+{
+    
+    for(int currentListIndex = 0;currentListIndex < DEG_MAX+2; currentListIndex++)
+    {
+        Node* currentVertexNode = graph->numChoiceVertexLinkedList[currentListIndex];
+        while(currentVertexNode != NULL)
+        {
+            for(int neighbour = 0; neighbour < currentVertexNode->vertex->degree ; neighbour++)
+            {
+                int neighbourID = currentVertexNode->neighbourIDs[neighbour];
+                Node* neighbourNode = FindVertexNode(neighbourID,graph);
+                currentVertexNode->nhood[neighbour] = neighbourNode;
+            }
+            currentVertexNode = currentVertexNode->next;
+        }
     }
 }

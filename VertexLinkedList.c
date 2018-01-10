@@ -1,12 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "VertexLinkedList.h"
+Vertex* NewVertex(int id, int degree)
+{
+    Vertex* newVertex = (struct Vertex*)malloc(sizeof(struct Vertex));
+    newVertex->id = id;
+    newVertex->degree = degree;
+    newVertex->state = undecided;
 
-Node* NewNode(int vertex)
+    newVertex->numDominated = 0;
+    newVertex->numChoice = degree+1;
+    newVertex->dominatingDegree = degree+1;
+    newVertex->dominatorDegree = 0;
+
+    return newVertex;
+}
+Node* NewNode(Vertex* vertex)
 {
   Node* newNode = (struct Node*)malloc(sizeof(struct Node));
   newNode->vertex = vertex;
-  newNode->color = white;
+  newNode->nhood = (struct Node**)malloc(sizeof(struct Node*) * vertex->degree);
+  newNode->neighbourIDs = (int*)malloc(sizeof(int*) * vertex->degree);
   newNode->next = NULL;
   newNode->prev = NULL;
   return newNode;
@@ -19,11 +33,11 @@ void PrintList(Node** head)
     return;
   }
   Node currentVertex = **head;
-  printf("vertex: %3d , ", currentVertex.vertex);
+  printf("vertex: %3d , ", currentVertex.vertex->id);
   while(currentVertex.next != NULL )
   {
     currentVertex = *currentVertex.next;
-    printf("vertex: %3d ,", currentVertex.vertex);
+    printf("vertex: %3d ,", currentVertex.vertex->id);
   }
   printf("\n");
 }
@@ -43,17 +57,18 @@ void DeleteNodeNoFree(Node* toDelete,Node** headPointer)
     toDelete->prev->next = toDelete->next;
   }
 }
-void InsertNewNodeAtHead(int vertex, Node** head)
+Node* InsertNewNodeAtHead(Vertex* vertex, Node** head)
 {
   Node* newNode = NewNode(vertex);
   if(*head == NULL)
   {
     *head = newNode;
-    return;
+    return newNode;
   }
   (*head)->prev = newNode;
   newNode->next = *head;
   *head = newNode;
+  return newNode;
 }
 void InsertExistingNodeAtHead(Node* node, Node** head)
 {
@@ -71,10 +86,7 @@ void InsertExistingNodeAtHead(Node* node, Node** head)
   *head = node;
   return;
 }
-void ChangeColor(Node* node, Color color)
-{
-  node->color = color;
-}
+
 //moves a vertex for the list with head1 to the list with head2
 void ChangeLists(Node* toChange, Node** head1,Node** head2)
 {
@@ -82,25 +94,14 @@ void ChangeLists(Node* toChange, Node** head1,Node** head2)
   InsertExistingNodeAtHead(toChange, head2);
 }
 
-Node* FindVertexNode(int vertex, Node* head)
-{
-  Node* vertexNode = head;
-  while(vertexNode !=NULL)
-  {
-    if(vertexNode->vertex == vertex)
-    {
-      break;
-    }
-    vertexNode = vertexNode->next;
-  }
-  return vertexNode;
-}
-Node* GetNeighbourNode(Node* currentVertex, int neighbour, int degree)
+
+Node* GetNeighbourNode(Node* currentVertex, int neighbour)
 {
   Node* neighbourNode = NULL;
+  int degree = currentVertex->vertex->degree;
   for(int i = 0; i < degree; i++)
   {
-    if(currentVertex->nhood[i]->vertex == neighbour)
+    if(currentVertex->nhood[i]->vertex->id == neighbour)
     {
       neighbourNode = currentVertex->nhood[i];
       break;
@@ -108,23 +109,7 @@ Node* GetNeighbourNode(Node* currentVertex, int neighbour, int degree)
   }
   return neighbourNode;
 }
-void InitalizeVertexNeighbourhoods(Node** numChoiceVertexList,int size, int* numChoice,int* degree,int** adjacent)
-{
-  for(int i = 0; i < size; i++)
-  {
-    Node* currentVertexNode = numChoiceVertexList[i];
-    while(currentVertexNode != NULL)
-    {
-      int currentVertex = currentVertexNode->vertex;
-      for(int neighbour = 0; neighbour < degree[currentVertex]; neighbour++)
-      {
-        Node* neighbourNode = FindVertexNode(adjacent[currentVertex][neighbour], numChoiceVertexList[ numChoice[adjacent[currentVertex][neighbour]] ]);
-        currentVertexNode->nhood[neighbour] = neighbourNode;
-      }
-      currentVertexNode = currentVertexNode->next;
-    }
-  }
-}
+
 
 void FreeVertexListPointers(Node** numChoiceVertexList,int size)
 {
