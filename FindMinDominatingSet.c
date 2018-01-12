@@ -62,7 +62,7 @@ void InitalizeVariables(Graph* graph, DominatingSet* domSet, DominatingSet* minD
     Node* currentVertexNode;
     for(int currentListIndex = 0;currentListIndex < DEG_MAX+2; currentListIndex++)
     {
-        currentVertexNode = graph->numChoiceVertexLinkedList[currentListIndex];
+        currentVertexNode = graph->numChoiceVertexList[currentListIndex];
         while(currentVertexNode != NULL)
         {
           currentVertexNode->vertex->dominatorDegree = CalculateDominatorDegree(currentVertexNode);
@@ -70,10 +70,83 @@ void InitalizeVariables(Graph* graph, DominatingSet* domSet, DominatingSet* minD
         }
     }
 }
+int DominatorBound(Graph* graph)
+{
+  int nExtra = 0;
+  int toRemove = 0;
+  int index = 0;
+  int dominator[DEG_MAX+1];
+  for(int i = 0; i< DEG_MAX+1; i++)
+  {
+    dominator[i] = 0;
+  }
+  Node* vertexNode;
+  for(int listIndex = 0;listIndex < DEG_MAX+2; listIndex++)
+    {
+        vertexNode = graph->numChoiceVertexList[listIndex];
+        while(vertexNode != NULL)
+        {
+          Vertex* vertex = vertexNode->vertex;
+          if(vertex->numDominated == 0)
+          {
+            dominator[vertex->dominatorDegree]++;
+          }
+          vertexNode= vertexNode->next;
+        }
+    }
+  while(index < 17)
+  {
+    if(dominator[index] == 0)
+    {
+      index++;
+      continue;
+    }
+    toRemove = index;
+    nExtra = nExtra + 1;
+    while(toRemove > 0 && index < 17)
+    {
+      if(dominator[index] >= toRemove)
+      {
+        dominator[index] = dominator[index] - toRemove;
+        toRemove = 0;
+      }
+      else
+      {
+        toRemove = toRemove - dominator[index];
+        dominator[index] = 0;
+        index++;
+      }
+    }
+  }
+  return nExtra;
+}
 void FindMinDomSet(Graph* graph, DominatingSet* domSet, DominatingSet* minDomSet)
 {
-
+  //if we found a dominating set
+  if(domSet->nDominated == graph->numberOfVertices)
+  {
+    //found a new minimum dominating set
+    if(domSet->size < minDomSet->size)
+    {
+      minDomSet = domSet;
+    }
+    return;
+  }
+  //get a vertex with minimum numChoice
+  Node* decisionVertexNode = NULL;
+  for(int i = 0; i<DEG_MAX+2;i++)
+  {
+    if(graph->numChoiceVertexList[i] != NULL)
+    {
+      decisionVertexNode = graph->numChoiceVertexList[i];
+      DeleteNodeNoFree(graph->numChoiceVertexList[i],&(graph->numChoiceVertexList[i]));
+      break;
+    }
+  }
+  Vertex* decisionVertex = decisionVertexNode->vertex;
+  int nExtra = DominatorBound(graph);
 }
+
 int main(int argc, char const *argv[])
 {
   int outputType;

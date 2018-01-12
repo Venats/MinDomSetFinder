@@ -11,7 +11,7 @@
 typedef struct Graph
 {
     int numberOfVertices;
-    Node* numChoiceVertexLinkedList[DEG_MAX + 2];
+    Node* numChoiceVertexList[DEG_MAX + 2];
 
 }Graph;
 Graph* NewGraph(int numberOfVertices);

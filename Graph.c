@@ -8,7 +8,7 @@ Graph* NewGraph(int numberOfVertices)
     newGraph->numberOfVertices = numberOfVertices;
     for(int i = 0; i<DEG_MAX +2; i++)
     {
-        newGraph->numChoiceVertexLinkedList[i] = NULL;
+        newGraph->numChoiceVertexList[i] = NULL;
     }
 }
 Node* FindVertexNode(int toFind, Graph* graph)
@@ -16,7 +16,7 @@ Node* FindVertexNode(int toFind, Graph* graph)
     Node* currentVertexNode;
     for(int currentListIndex = 0;currentListIndex < DEG_MAX+2; currentListIndex++)
     {
-        currentVertexNode = graph->numChoiceVertexLinkedList[currentListIndex];
+        currentVertexNode = graph->numChoiceVertexList[currentListIndex];
         while(currentVertexNode != NULL)
         {
             if(currentVertexNode->vertex->id == toFind)
@@ -32,7 +32,7 @@ void InitalizeVertexNeighbourhoods(Graph* graph)
 {
     for(int currentListIndex = 0;currentListIndex < DEG_MAX+2; currentListIndex++)
     {
-        Node* currentVertexNode = graph->numChoiceVertexLinkedList[currentListIndex];
+        Node* currentVertexNode = graph->numChoiceVertexList[currentListIndex];
         while(currentVertexNode != NULL)
         {
             for(int neighbour = 0; neighbour < currentVertexNode->vertex->degree ; neighbour++)
@@ -54,7 +54,7 @@ void FreeGraph(Graph* graph)
 {
   for(int i = 0; i< DEG_MAX + 2; i++)
   {
-    Node* currentNode = graph->numChoiceVertexLinkedList[i];
+    Node* currentNode = graph->numChoiceVertexList[i];
     while(currentNode != NULL)
     {
       Node* nextNode = currentNode->next;
@@ -64,6 +64,6 @@ void FreeGraph(Graph* graph)
       free(currentNode);
       currentNode = nextNode;
     }
-    graph->numChoiceVertexLinkedList[i] = NULL;
+    graph->numChoiceVertexList[i] = NULL;
   }
 }

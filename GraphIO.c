@@ -72,7 +72,7 @@ Graph* ReadGraph()
     }
     
     Vertex* vertexToAdd = NewVertex(vertexId,vertexDegree);
-    Node** vertexLists = graphRead->numChoiceVertexLinkedList;
+    Node** vertexLists = graphRead->numChoiceVertexList;
     Node* insertedNode = InsertNewNodeAtHead(vertexToAdd, &(vertexLists[vertexToAdd->numChoice]));
     for(int j = 0; j < vertexDegree; j++)
     {
