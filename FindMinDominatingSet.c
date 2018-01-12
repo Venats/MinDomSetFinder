@@ -6,6 +6,12 @@
 #include "VertexLinkedList.h"
 #include "Util.h"
 #include "Graph.h"
+typedef struct DominatingSet
+{
+  int size;
+  int nDominated;
+  int vertexIDs[NMAX];
+}DominatingSet;
 
 int GetOutputType(int argc, char const *argv[])
 {
@@ -24,6 +30,50 @@ int GetOutputType(int argc, char const *argv[])
   }
   return outputType;
 }
+int CalculateDominatorDegree(Node* vertexNode)
+{
+  int dominatorDegree = 0;
+  Vertex* vertex = vertexNode->vertex;
+  if(vertex->state == undecided)
+  {
+    dominatorDegree = vertex->dominatingDegree;
+  }
+  Node* neighbourNode = vertexNode->nhood[0];
+  for(int neighbourIndex = 0; neighbourIndex < vertex->degree; neighbourIndex++)
+  {
+    Node* neighbourNode = vertexNode->nhood[neighbourIndex];
+    Vertex* neighbourVertex = neighbourNode->vertex;
+    if(neighbourVertex->state == undecided && neighbourVertex->dominatingDegree > dominatorDegree)
+    {
+      dominatorDegree = neighbourVertex->dominatingDegree;
+    }
+  }
+  printf("setting dominator degree of vertex %d to %d\n", vertex->id, dominatorDegree);
+  return dominatorDegree;
+}
+void InitalizeVariables(Graph* graph, DominatingSet* domSet, DominatingSet* minDomSet)
+{
+    //nDominated = graph->numberOfVertice;
+    minDomSet->size = graph->numberOfVertices;
+    for(int vertexID = 0; vertexID < minDomSet->size;vertexID++)
+    {
+       minDomSet->vertexIDs[vertexID] = vertexID;
+    };
+    Node* currentVertexNode;
+    for(int currentListIndex = 0;currentListIndex < DEG_MAX+2; currentListIndex++)
+    {
+        currentVertexNode = graph->numChoiceVertexLinkedList[currentListIndex];
+        while(currentVertexNode != NULL)
+        {
+          currentVertexNode->vertex->dominatorDegree = CalculateDominatorDegree(currentVertexNode);
+          currentVertexNode = currentVertexNode->next;
+        }
+    }
+}
+void FindMinDomSet(Graph* graph, DominatingSet* domSet, DominatingSet* minDomSet)
+{
+
+}
 int main(int argc, char const *argv[])
 {
   int outputType;
@@ -32,24 +82,12 @@ int main(int argc, char const *argv[])
   outputType = GetOutputType(argc, argv);
   if(outputType == -1) return 0;
   Graph* graph =  ReadGraph();
+  DominatingSet domSet;
+  DominatingSet minDomSet;
   while(graph != NULL)
   {
-    for(int currentListIndex = 0;currentListIndex < DEG_MAX+2; currentListIndex++)
-    {
-        Node* currentVertexNode = graph->numChoiceVertexLinkedList[currentListIndex];
-        while(currentVertexNode != NULL)
-        {
-            printf("read a non-null vertexNode \n");
-            printf("vertex pointer is %p\n",currentVertexNode->vertex);
-            printf("node %d has neighbours:\n", currentVertexNode->vertex->id);
-            for(int neighbour = 0; neighbour < currentVertexNode->vertex->degree ; neighbour++)
-            {
-                printf(" %d",currentVertexNode->nhood[neighbour]->vertex->id);
-            }
-            printf("\n");
-            currentVertexNode = currentVertexNode->next;
-        }
-    }
+    InitalizeVariables(graph,&domSet,&minDomSet);
+    FindMinDomSet(graph,&domSet,&minDomSet);
     FreeGraph(graph);
     graph = ReadGraph();
   }
