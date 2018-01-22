@@ -18,4 +18,5 @@ Graph* NewGraph(int numberOfVertices);
 Node* FindVertexNode(int toFind, Graph* graph);
 void InitalizeVertexNeighbourhoods(Graph* graph);
 void FreeGraph(Graph* graph);
+Node** GetDistanceTwoNeighbourhood(Node* vertexNode);
 #endif

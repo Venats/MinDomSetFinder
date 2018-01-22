@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 
 #include "GraphIO.h"
@@ -70,6 +71,7 @@ void InitalizeVariables(Graph* graph, DominatingSet* domSet, DominatingSet* minD
         }
     }
 }
+//TODO: look at making more consice
 int DominatorBound(Graph* graph)
 {
   int nExtra = 0;
@@ -82,18 +84,18 @@ int DominatorBound(Graph* graph)
   }
   Node* vertexNode;
   for(int listIndex = 0;listIndex < DEG_MAX+2; listIndex++)
+  {
+    vertexNode = graph->numChoiceVertexList[listIndex];
+    while(vertexNode != NULL)
     {
-        vertexNode = graph->numChoiceVertexList[listIndex];
-        while(vertexNode != NULL)
-        {
-          Vertex* vertex = vertexNode->vertex;
-          if(vertex->numDominated == 0)
-          {
-            dominator[vertex->dominatorDegree]++;
-          }
-          vertexNode= vertexNode->next;
-        }
+      Vertex* vertex = vertexNode->vertex;
+      if(vertex->numDominated == 0)
+      {
+        dominator[vertex->dominatorDegree]++;
+      }
+      vertexNode= vertexNode->next;
     }
+  }
   while(index < 17)
   {
     if(dominator[index] == 0)
@@ -120,6 +122,10 @@ int DominatorBound(Graph* graph)
   }
   return nExtra;
 }
+bool AssumeOutOfDom(Node* decisionVertexNode, Graph* graph)
+{
+
+}
 void FindMinDomSet(Graph* graph, DominatingSet* domSet, DominatingSet* minDomSet)
 {
   //if we found a dominating set
@@ -145,6 +151,13 @@ void FindMinDomSet(Graph* graph, DominatingSet* domSet, DominatingSet* minDomSet
   }
   Vertex* decisionVertex = decisionVertexNode->vertex;
   int nExtra = DominatorBound(graph);
+  printf("nExtra = %d\n",nExtra);
+
+  if((domSet->size + nExtra) >= minDomSet->size || !AssumeOutOfDom(decisionVertexNode, graph))
+  {
+    InsertExistingNodeAtHead(decisionVertexNode, &(graph->numChoiceVertexList[decisionVertex->numChoice]));
+    return;
+  }
 }
 
 int main(int argc, char const *argv[])

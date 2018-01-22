@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include "Graph.h"
 #include "VertexLinkedList.h"
 Graph* NewGraph(int numberOfVertices)
@@ -50,6 +51,51 @@ void InitalizeVertexNeighbourhoods(Graph* graph)
         }
     }
 }
+
+bool NotInList(Node** nodeList,int size,Node* nodeToCheck)
+{
+  Node* nodeInList;
+  for(int i = 0; i < size; i++)
+  {
+    nodeInList = nodeList[i];
+    if(nodeInList == nodeToCheck)
+    {
+      return false;
+    }
+  }
+  return true;
+}
+
+Node** GetDistanceTwoNeighbourhood(Node* vertexNode)
+{
+  Node** distanceTwoNhood = (struct Node**)malloc(sizeof(struct Node*) * DEG_MAX * DEG_MAX);
+  Vertex* vertex = vertexNode->vertex;
+  int numNeighbours = vertex->degree;
+  int sizeOfDistTwoNhood = 0;
+  for(int neighbour = 0; neighbour < numNeighbours; neighbour++)
+  {
+    distanceTwoNhood[neighbour] = vertexNode->nhood[neighbour];
+    sizeOfDistTwoNhood++;
+  }
+
+  for(int i = 0; i < numNeighbours; i++)
+  {
+    Node* adjacentNeighbour = distanceTwoNhood[i];
+    Vertex* adjacentVertex = adjacentNeighbour->vertex;
+
+    for(int distTwoNeigh = 0; distTwoNeigh < adjacentVertex->degree; distTwoNeigh++)
+    {
+      Node* neighbour = adjacentNeighbour->nhood[distTwoNeigh];
+      if(NotInList(distanceTwoNhood,sizeOfDistTwoNhood, neighbour) && neighbour != vertexNode)
+      {
+        distanceTwoNhood[sizeOfDistTwoNhood] = neighbour;
+        sizeOfDistTwoNhood++;
+      }
+    }
+  }
+  return distanceTwoNhood;
+}
+
 void FreeGraph(Graph* graph)
 {
   for(int i = 0; i< DEG_MAX + 2; i++)

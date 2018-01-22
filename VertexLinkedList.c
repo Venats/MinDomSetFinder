@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "VertexLinkedList.h"
+
 Vertex* NewVertex(int id, int degree)
 {
     Vertex* newVertex = (struct Vertex*)malloc(sizeof(struct Vertex));
@@ -109,4 +111,6 @@ Node* GetNeighbourNode(Node* currentVertex, int neighbour)
   }
   return neighbourNode;
 }
+
+
 
