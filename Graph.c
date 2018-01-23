@@ -68,7 +68,7 @@ bool NotInList(Node** nodeList,int size,Node* nodeToCheck)
 
 Node** GetDistanceTwoNeighbourhood(Node* vertexNode)
 {
-  Node** distanceTwoNhood = (struct Node**)malloc(sizeof(struct Node*) * DEG_MAX * DEG_MAX);
+  Node** distanceTwoNhood = (struct Node**)malloc(sizeof(struct Node*) * DEG_MAX *DEG_MAX);
   Vertex* vertex = vertexNode->vertex;
   int numNeighbours = vertex->degree;
   int sizeOfDistTwoNhood = 0;
@@ -92,6 +92,11 @@ Node** GetDistanceTwoNeighbourhood(Node* vertexNode)
         sizeOfDistTwoNhood++;
       }
     }
+  }
+  //set rest of area to null
+  for(int i = sizeOfDistTwoNhood; i< DEG_MAX*DEG_MAX; i++)
+  {
+    distanceTwoNhood[i] = NULL;
   }
   return distanceTwoNhood;
 }

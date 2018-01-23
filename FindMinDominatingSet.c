@@ -122,9 +122,58 @@ int DominatorBound(Graph* graph)
   }
   return nExtra;
 }
-bool AssumeOutOfDom(Node* decisionVertexNode, Graph* graph)
+bool UndominatedAndNumChoiceIsOne(Node** distanceTwoNhood)
 {
+  Node* vertexNode;
+  for(int i = 0; i< DEG_MAX*DEG_MAX;i++)
+  {
+    vertexNode = distanceTwoNhood[i];
+    if(vertexNode == NULL)
+    {
+      break;
+    } 
+    if(vertexNode->vertex->numChoice == 1 && vertexNode->vertex->numDominated == 0)
+    {
+      return true;
+    }
+  }
+  return false;
+}
+bool AssumeOutOfDom(Node* vertexNode, Graph* graph)
+{
+  Vertex* vertex = vertexNode->vertex;
+  if(vertex->numChoice == 1 && vertex-> numDominated == 0)
+  {
+    return false;
+  }
+  Node** distanceTwoNhood = GetDistanceTwoNeighbourhood(vertexNode);
+  if(UndominatedAndNumChoiceIsOne(distanceTwoNhood))
+  {
+    return false;
+  }
+  vertex->state = outDomSet;
+  vertex->numChoice--;
 
+  Node* neighbourNode;
+  Vertex* neighbour;
+  for(int i = 0; i< DEG_MAX*DEG_MAX;i++)
+  {
+    neighbourNode = distanceTwoNhood[i];
+    if(vertexNode == NULL)
+    {
+      break;
+    }
+    neighbour = neighbourNode->vertex;
+    neighbour->numChoice--;
+    if(neighbour->state == undecided)
+    {
+      Node** currentList = &(graph->numChoiceVertexList[(neighbour->numChoice)+1]);
+      Node** destList = &(graph->numChoiceVertexList[neighbour->numChoice]);
+      ChangeLists(neighbourNode,currentList,destList);
+    }
+  }
+
+  return true;
 }
 void FindMinDomSet(Graph* graph, DominatingSet* domSet, DominatingSet* minDomSet)
 {
@@ -152,12 +201,14 @@ void FindMinDomSet(Graph* graph, DominatingSet* domSet, DominatingSet* minDomSet
   Vertex* decisionVertex = decisionVertexNode->vertex;
   int nExtra = DominatorBound(graph);
   printf("nExtra = %d\n",nExtra);
-
   if((domSet->size + nExtra) >= minDomSet->size || !AssumeOutOfDom(decisionVertexNode, graph))
   {
     InsertExistingNodeAtHead(decisionVertexNode, &(graph->numChoiceVertexList[decisionVertex->numChoice]));
+    printf("returning\n");
     return;
   }
+
+  
 }
 
 int main(int argc, char const *argv[])

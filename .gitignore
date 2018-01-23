@@ -46,6 +46,9 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+#vscode stuff
+*.vscode
+
 #Ignore compiled files
 *.h.ghc
 *.exe
