@@ -124,14 +124,9 @@ int DominatorBound(Graph* graph)
 }
 bool CheckNeighbourhoodNumChoice(Node* vertexNode)
 {
-
   for(int i = 0; i< vertexNode->vertex->degree;i++)
   {
     vertexNode = vertexNode->nhood[i];
-    if(vertexNode == NULL)
-    {
-      break;
-    } 
     if(vertexNode->vertex->numChoice == 1 && vertexNode->vertex->numDominated == 0)
     {
       return true;
@@ -146,7 +141,7 @@ bool AssumeOutOfDom(Node* vertexNode, Graph* graph)
   {
     return false;
   }
-  if(CheckNeighbourhoodNumChoice(vertexNode->nhood))
+  if(CheckNeighbourhoodNumChoice(vertexNode))
   {
     return false;
   }
@@ -155,7 +150,7 @@ bool AssumeOutOfDom(Node* vertexNode, Graph* graph)
 
   Node* neighbourNode;
   Vertex* neighbour;
-
+  //adjust numchoice for neighbour vertices
   for(int i = 0; i< vertex->degree;i++)
   {
     neighbourNode = vertexNode->nhood[i];
@@ -172,7 +167,20 @@ bool AssumeOutOfDom(Node* vertexNode, Graph* graph)
       ChangeLists(neighbourNode,currentList,destList);
     }
   }
-
+  //because the current vertex we are looking at is no longer undecided this affects the dominator degree
+  //of all vertices distance 2 away from the vertex
+  Node** distanceTwoNhood = GetDistanceTwoNeighbourhood(vertexNode);
+  Node* d2Neighbour;
+  for(int i = 0; i < DEG_MAX*DEG_MAX; i++)
+  {
+    d2Neighbour = distanceTwoNhood[i];
+    if(d2Neighbour == NULL)
+    {
+      break;
+    }
+    CalculateDominatorDegree(d2Neighbour);
+  }
+  free(distanceTwoNhood);
   return true;
 }
 void FindMinDomSet(Graph* graph, DominatingSet* domSet, DominatingSet* minDomSet)
