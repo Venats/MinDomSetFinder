@@ -122,12 +122,12 @@ int DominatorBound(Graph* graph)
   }
   return nExtra;
 }
-bool UndominatedAndNumChoiceIsOne(Node** distanceTwoNhood)
+bool CheckNeighbourhoodNumChoice(Node* vertexNode)
 {
-  Node* vertexNode;
-  for(int i = 0; i< DEG_MAX*DEG_MAX;i++)
+
+  for(int i = 0; i< vertexNode->vertex->degree;i++)
   {
-    vertexNode = distanceTwoNhood[i];
+    vertexNode = vertexNode->nhood[i];
     if(vertexNode == NULL)
     {
       break;
@@ -146,8 +146,7 @@ bool AssumeOutOfDom(Node* vertexNode, Graph* graph)
   {
     return false;
   }
-  Node** distanceTwoNhood = GetDistanceTwoNeighbourhood(vertexNode);
-  if(UndominatedAndNumChoiceIsOne(distanceTwoNhood))
+  if(CheckNeighbourhoodNumChoice(vertexNode->nhood))
   {
     return false;
   }
@@ -156,9 +155,10 @@ bool AssumeOutOfDom(Node* vertexNode, Graph* graph)
 
   Node* neighbourNode;
   Vertex* neighbour;
-  for(int i = 0; i< DEG_MAX*DEG_MAX;i++)
+
+  for(int i = 0; i< vertex->degree;i++)
   {
-    neighbourNode = distanceTwoNhood[i];
+    neighbourNode = vertexNode->nhood[i];
     if(vertexNode == NULL)
     {
       break;
