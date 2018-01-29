@@ -127,7 +127,7 @@ bool CheckNeighbourhoodNumChoice(Node* vertexNode)
   for(int i = 0; i< vertexNode->vertex->degree;i++)
   {
     vertexNode = vertexNode->nhood[i];
-    if(vertexNode->vertex->numChoice == 1 && vertexNode->vertex->numDominated == 0)
+    if(vertexNode->vertex->numChoice == 1)
     {
       return true;
     }
@@ -167,7 +167,7 @@ bool AssumeOutOfDom(Node* vertexNode, Graph* graph)
       ChangeLists(neighbourNode,currentList,destList);
     }
   }
-  //because the current vertex we are looking at is no longer undecided this affects the dominator degree
+  //because the current vertex we are looking at no longer undecided this affects the dominator degree
   //of all vertices distance 2 away from the vertex
   Node** distanceTwoNhood = GetDistanceTwoNeighbourhood(vertexNode);
   Node* d2Neighbour;
@@ -182,6 +182,50 @@ bool AssumeOutOfDom(Node* vertexNode, Graph* graph)
   }
   free(distanceTwoNhood);
   return true;
+}
+//undoes everything AssumeOutOfDom does
+void ChangeFromOutToUndecided(Node* vertexNode ,Graph* graph)
+{
+  Vertex* vertex = vertexNode->vertex;
+  vertex->state = undecided;
+  vertex->numChoice++;
+
+  Node* neighbourNode;
+  Vertex* neighbour;
+  //adjust numchoice for neighbour vertices
+  for(int i = 0; i< vertex->degree;i++)
+  {
+    neighbourNode = vertexNode->nhood[i];
+    if(vertexNode == NULL)
+    {
+      break;
+    }
+    neighbour = neighbourNode->vertex;
+    neighbour->numChoice++;
+    if(neighbour->state == undecided)
+    {
+      Node** currentList = &(graph->numChoiceVertexList[(neighbour->numChoice)-1]);
+      Node** destList = &(graph->numChoiceVertexList[neighbour->numChoice]);
+      ChangeLists(neighbourNode,currentList,destList);
+    }
+  }
+  Node** distanceTwoNhood = GetDistanceTwoNeighbourhood(vertexNode);
+  Node* d2Neighbour;
+  for(int i = 0; i < DEG_MAX*DEG_MAX; i++)
+  {
+    d2Neighbour = distanceTwoNhood[i];
+    if(d2Neighbour == NULL)
+    {
+      break;
+    }
+    CalculateDominatorDegree(d2Neighbour);
+  }
+  free(distanceTwoNhood);
+  return;
+}
+void AssumeInDom(Node* vertexNode ,Graph* graph)
+{
+  
 }
 void FindMinDomSet(Graph* graph, DominatingSet* domSet, DominatingSet* minDomSet)
 {
@@ -209,14 +253,18 @@ void FindMinDomSet(Graph* graph, DominatingSet* domSet, DominatingSet* minDomSet
   Vertex* decisionVertex = decisionVertexNode->vertex;
   int nExtra = DominatorBound(graph);
   printf("nExtra = %d\n",nExtra);
-  if((domSet->size + nExtra) >= minDomSet->size || !AssumeOutOfDom(decisionVertexNode, graph))
+  if((domSet->size + nExtra) >= minDomSet->size )
   {
     InsertExistingNodeAtHead(decisionVertexNode, &(graph->numChoiceVertexList[decisionVertex->numChoice]));
     printf("returning\n");
     return;
   }
-
-  
+  if(AssumeOutOfDom(decisionVertex, graph))
+  {
+    FindMinDomSet(graph, domSet, minDomSet);
+    ChangeFromOutToUndecided(decisionVertex,graph);
+  }
+  AssumeInDom(decisionVertex, graph);
 }
 
 int main(int argc, char const *argv[])
