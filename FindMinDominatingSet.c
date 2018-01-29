@@ -225,7 +225,7 @@ void ChangeFromOutToUndecided(Node* vertexNode ,Graph* graph)
 }
 void AssumeInDom(Node* vertexNode ,Graph* graph)
 {
-  
+
 }
 void FindMinDomSet(Graph* graph, DominatingSet* domSet, DominatingSet* minDomSet)
 {
@@ -259,12 +259,12 @@ void FindMinDomSet(Graph* graph, DominatingSet* domSet, DominatingSet* minDomSet
     printf("returning\n");
     return;
   }
-  if(AssumeOutOfDom(decisionVertex, graph))
+  if(AssumeOutOfDom(decisionVertexNode, graph))
   {
     FindMinDomSet(graph, domSet, minDomSet);
-    ChangeFromOutToUndecided(decisionVertex,graph);
+    ChangeFromOutToUndecided(decisionVertexNode,graph);
   }
-  AssumeInDom(decisionVertex, graph);
+  AssumeInDom(decisionVertexNode, graph);
 }
 
 int main(int argc, char const *argv[])
