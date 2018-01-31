@@ -52,6 +52,24 @@ int CalculateDominatorDegree(Node* vertexNode)
   printf("setting dominator degree of vertex %d to %d\n", vertex->id, dominatorDegree);
   return dominatorDegree;
 }
+int CalculateDominatingDegree(Node* vertexNode)
+{
+  Vertex* vertex = vertexNode->vertex;
+  int dominatingDegree = 0;
+  if(vertex->numDominated == 0)
+  {
+    dominatingDegree++;
+  }
+  for(int i =0; i< vertex->degree; i++)
+  {
+    Vertex* neighbour = vertexNode->nhood[i]->vertex;
+    if(vertex->numDominated == 0)
+    {
+      dominatingDegree++;
+    }
+  }
+  return dominatingDegree;
+}
 void InitalizeVariables(Graph* graph, DominatingSet* domSet, DominatingSet* minDomSet)
 {
     //nDominated = graph->numberOfVertice;
@@ -223,9 +241,50 @@ void ChangeFromOutToUndecided(Node* vertexNode ,Graph* graph)
   free(distanceTwoNhood);
   return;
 }
-void AssumeInDom(Node* vertexNode ,Graph* graph)
+void AssumeInDom(Node* vertexNode ,Graph* graph, DominatingSet* domSet)
 {
+  Vertex* vertex = vertexNode->vertex;
 
+  vertex->state = inDomSet;
+  domSet->vertexIDs[domSet->size] = vertex->id;
+  domSet->size++;
+  vertex->numDominated++;
+  if(vertex->numDominated == 1)
+  {
+    domSet->nDominated++;
+  }
+  for(int i = 0; i<vertex->degree;i++)
+  {
+    Vertex* neighbour = vertexNode->nhood[i]->vertex;
+    vertex->numDominated++;
+    if(vertex->numDominated == 1)
+    {
+      domSet->nDominated++;
+    }
+  }
+  Node** distanceTwoNhood = GetDistanceTwoNeighbourhood(vertexNode);
+  Node* d2Neighbour;
+  //recalculate dominating degree
+  for(int i = 0; i < DEG_MAX*DEG_MAX; i++)
+  {
+    d2Neighbour = distanceTwoNhood[i];
+    if(d2Neighbour == NULL)
+    {
+      break;
+    }
+    d2Neighbour->vertex->dominatingDegree = CalculateDominatingDegree(d2Neighbour);
+  }
+  //recalculate dominator degree
+  for(int i = 0; i < DEG_MAX*DEG_MAX; i++)
+  {
+    d2Neighbour = distanceTwoNhood[i];
+    if(d2Neighbour == NULL)
+    {
+      break;
+    }
+    d2Neighbour->vertex->dominatingDegree = CalculateDominatorDegree(d2Neighbour);
+  }
+  free(distanceTwoNhood);
 }
 void FindMinDomSet(Graph* graph, DominatingSet* domSet, DominatingSet* minDomSet)
 {
@@ -259,12 +318,14 @@ void FindMinDomSet(Graph* graph, DominatingSet* domSet, DominatingSet* minDomSet
     printf("returning\n");
     return;
   }
+
   if(AssumeOutOfDom(decisionVertexNode, graph))
   {
     FindMinDomSet(graph, domSet, minDomSet);
     ChangeFromOutToUndecided(decisionVertexNode,graph);
   }
-  AssumeInDom(decisionVertexNode, graph);
+
+  AssumeInDom(decisionVertexNode, graph,domSet);
 }
 
 int main(int argc, char const *argv[])
