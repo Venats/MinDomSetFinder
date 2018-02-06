@@ -1,0 +1,2 @@
+./FindMinDominatingSet.exe 1 < testInput.txt
+makefile:11: recipe for target 'test' failed
