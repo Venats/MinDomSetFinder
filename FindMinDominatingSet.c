@@ -49,7 +49,7 @@ int CalculateDominatorDegree(Node* vertexNode)
       dominatorDegree = neighbourVertex->dominatingDegree;
     }
   }
-  printf("setting dominator degree of vertex %d to %d\n", vertex->id, dominatorDegree);
+  //printf("setting dominator degree of vertex %d to %d\n", vertex->id, dominatorDegree);
   return dominatorDegree;
 }
 int CalculateDominatingDegree(Node* vertexNode)
@@ -74,6 +74,7 @@ void InitalizeVariables(Graph* graph, DominatingSet* domSet, DominatingSet* minD
 {
     minDomSet->nDominated = graph->numberOfVertices;
     minDomSet->size = graph->numberOfVertices;
+    domSet->size = 0;
     for(int vertexID = 0; vertexID < minDomSet->size;vertexID++)
     {
        minDomSet->vertexIDs[vertexID] = vertexID;
@@ -267,8 +268,8 @@ void AssumeInDom(Node* vertexNode, DominatingSet* domSet)
   for(int i = 0; i<vertex->degree;i++)
   {
     Vertex* neighbour = vertexNode->nhood[i]->vertex;
-    vertex->numDominated++;
-    if(vertex->numDominated == 1)
+    neighbour->numDominated++;
+    if(neighbour->numDominated == 1)
     {
       domSet->nDominated++;
     }
@@ -312,8 +313,8 @@ void ChangeFromInToUndecided(Node* vertexNode,DominatingSet* domSet)
   for(int i = 0; i<vertex->degree;i++)
   {
     Vertex* neighbour = vertexNode->nhood[i]->vertex;
-    vertex->numDominated--;
-    if(vertex->numDominated == 0)
+    neighbour->numDominated--;
+    if(neighbour->numDominated == 0)
     {
       domSet->nDominated--;
     }
@@ -345,27 +346,41 @@ void ChangeFromInToUndecided(Node* vertexNode,DominatingSet* domSet)
 void FindMinDomSet(Graph* graph, DominatingSet* domSet, DominatingSet* minDomSet)
 {
   //if we found a dominating set
+  printf("ndominated = %d, numberOfVertices = %d\n",domSet->nDominated,graph->numberOfVertices);
+  printf("Current dominating set is: \n");
+  for(int i =0 ; i< domSet->size; i++)
+    {
+      printf(",%d",domSet->vertexIDs[i]);
+    }
+  printf("\n");
   if(domSet->nDominated == graph->numberOfVertices)
   {
     //found a new minimum dominating set
+    printf("domSet found has size %d current minDomSet has size %d\n", domSet->size, minDomSet->size);
     if(domSet->size < minDomSet->size)
     {
       printf("copying new minimum dominating set\n");
       CopyDomSet(minDomSet,domSet);
+
+      printf("min dominating set is: \n");
+      for(int i =0 ; i< minDomSet->size; i++)
+      {
+        printf(",%d",minDomSet->vertexIDs[i]);
+      }
+      printf("\n");
     }
     printf("found a dominating set\n");
     return;
   }
   //get a vertex with minimum numChoice
   Node* decisionVertexNode = NULL;
-  printf("looking for next vertex\n");
+  //printf("looking for next vertex\n");
   for(int i = 0; i<DEG_MAX+2;i++)
   {
     if(graph->numChoiceVertexList[i] != NULL)
     {
       decisionVertexNode = graph->numChoiceVertexList[i];
       DeleteNodeNoFree(graph->numChoiceVertexList[i],&(graph->numChoiceVertexList[i]));
-      printf("found vertex in numChoiceVertexList\n");
       break;
     }
   }
@@ -375,21 +390,21 @@ void FindMinDomSet(Graph* graph, DominatingSet* domSet, DominatingSet* minDomSet
   }
   Vertex* decisionVertex = decisionVertexNode->vertex;
   int nExtra = DominatorBound(graph);
-  printf("looking at vertex %d, nExtra = %d\n",decisionVertex->id, nExtra);
+  //printf("looking at vertex %d, nExtra = %d\n",decisionVertex->id, nExtra);
   if((domSet->size + nExtra) >= minDomSet->size )
   {
     InsertExistingNodeAtHead(decisionVertexNode, &(graph->numChoiceVertexList[decisionVertex->numChoice]));
-    printf("returning\n");
+    //printf("returning\n");
     return;
   }
 
   if(AssumeOutOfDom(decisionVertexNode, graph))
   {
-    printf("Assuming out of dom recurrsive call\n");
+    //printf("Assuming out of dom recurrsive call\n");
     FindMinDomSet(graph, domSet, minDomSet);
     ChangeFromOutToUndecided(decisionVertexNode,graph);
   }
-  printf("assume in domSet\n");
+  //printf("assume in domSet\n");
   AssumeInDom(decisionVertexNode, domSet);
   printf("vertex %d is now in the domset\n",decisionVertex->id);
   FindMinDomSet(graph,domSet,minDomSet);
@@ -423,7 +438,6 @@ int main(int argc, char const *argv[])
     FreeGraph(graph);
     printf("freeing graph\n");
     graph = ReadGraph();
-
 
 
   }
