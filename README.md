@@ -1,5 +1,6 @@
-Still working on this so doesn't currently do much. But eventually this should find a minimum dominating set in a sparse graph.
-While it will do this is NP time I'll be trying to make this run as fast as possible
+Still working on this currently the program does find the minimum dominating set of a graph but I'm outputing a lot of information I used to debug and the output format for the minimum dominating set isnt that nice.
+
+While it does this is NP time I'll be trying to make this run as fast as possible
 
 ### Definitions (work in progress)
 **dominating set** - A set of vertices such that all vertices in a graph are either in the dominating set or adjacent to a vertex in the dominating set
