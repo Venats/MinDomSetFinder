@@ -117,7 +117,7 @@ int DominatorBound(Graph* graph)
       vertexNode= vertexNode->next;
     }
   }
-  while(index < 17)
+  while(index < DEG_MAX+1)
   {
     if(dominator[index] == 0)
     {
